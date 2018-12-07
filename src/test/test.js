@@ -31,19 +31,22 @@ var subscription2 = web3.eth.subscribe('newBlockHeaders', function(error, result
 .on("error", console.error);
 
 var subscription3 = web3.eth.subscribe('syncing', function(error, sync){
-    if (!error)
-        console.log(sync);
+  if (!error)
+    console.log('sync: ')
+    console.log(sync);
 })
 .on("data", function(sync){
-  console.log('syncing')
+  console.log('data: ')
+  console.log(sync)
     // show some syncing stats
 })
 .on("changed", function(isSyncing){
-    if(isSyncing) {
-        // stop app operation
-    } else {
-        // regain app operation
-    }
+  console.log('isSyncing: ' + isSyncing)
+  if(isSyncing) {
+      // stop app operation
+  } else {
+      // regain app operation
+  }
 });
 
 var subscription4 = web3.eth.subscribe('logs', {}, function(error, result){
