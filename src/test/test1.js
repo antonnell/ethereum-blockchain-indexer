@@ -5,9 +5,13 @@ const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'
   }
 }))
 
+function run() {
+  web3.eth.isSyncing(function(error, sync){
+   if(!error) {
+     console.log(sync);
+     setTimeout(run, 60000)
+   }
+  });
+}
 
-web3.eth.isSyncing(function(error, sync){
- if(!error) {
-   console.log(sync);
- }
-});
+run()
