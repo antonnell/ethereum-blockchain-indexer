@@ -1,7 +1,7 @@
 {
   "defaultToken": "0xa3d58c4e56fedcae3a7c43a725aee9a71f0ece4e",
   "enode": {
-    "ipcPath": "~/.local/share/io.parity.ethereum/jsonrpc.ipc",
+    "ipcPath": "/root/.ethereum/geth.ipc",
     "wsApiUrl": "ws://localhost:8546"
   },
   "events": {
