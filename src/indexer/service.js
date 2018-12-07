@@ -91,7 +91,7 @@ const indexBlockNumber = number =>
 // optimized version of `getBlock('latest')`
 const CACHE_AGE = 1000
 const getLatestBlock = memoize(
-  () => web3.eth.getBlock('latest'),
+  () => { web3.eth.getBlock('latest') },
   { maxAge: CACHE_AGE }
 )
 
@@ -101,10 +101,14 @@ const indexNextBlock = () =>
     latest: getLatestBlock(),
     best: getBestBlock()
   })
-    .then(({ latest, best }) =>
+    .then(({ latest, best }) => {
+      console.log(latest)
+      console.log(best)
       best.hash === latest.hash ||
           indexBlockNumber(best.number + 1)
             .then(indexNextBlock)
+
+      }
     )
 
 // index all existing blocks in the blockchain from best to current
@@ -124,6 +128,7 @@ function indexIncomingBlocks () {
 
   timedStoreBestBlock.stop()
 
+  console.log(wsApiUrl)
   subscribe({
     url: wsApiUrl,
     onData: debounce(function (header) {
