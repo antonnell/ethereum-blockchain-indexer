@@ -1,5 +1,9 @@
 var Web3 = require('web3');
-var web3 = new Web3('ws://localhost:8546');
+const web3 = new Web3(new Web3.providers.WebsocketProvider(url, {
+  headers: {
+    Origin: "http://localhost"
+  }
+}))
 
 var subscription = web3.eth.subscribe(
   'newBlockHeaders',
