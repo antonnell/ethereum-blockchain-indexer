@@ -46,10 +46,7 @@ var subscription3 = web3.eth.subscribe('syncing', function(error, sync){
     }
 });
 
-var subscription4 = web3.eth.subscribe('logs', {
-    address: '0x123456..',
-    topics: ['0x12345...']
-}, function(error, result){
+var subscription4 = web3.eth.subscribe('logs', {}, function(error, result){
     if (!error)
         console.log(result);
 })
