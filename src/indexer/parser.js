@@ -57,7 +57,7 @@ function parseBlock (hash) {
   logger.verbose('Parsing block', hash)
   return web3.eth.getBlock(hash, true)
     .then((block) => {
-      Promise.all(
+      return Promise.all(
         block.transactions.map(transaction =>
           web3.eth.getTransactionReceipt(transaction.hash)
             .then(receipt => promiseAllProps({
