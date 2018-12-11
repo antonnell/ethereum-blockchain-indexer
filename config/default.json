@@ -2,7 +2,8 @@
   "defaultToken": "0xa3d58c4e56fedcae3a7c43a725aee9a71f0ece4e",
   "enode": {
     "ipcPath": "/root/.ethereum/geth.ipc",
-    "wsApiUrl": "ws://localhost:8546"
+    "wsApiUrl": "ws://localhost:8546",
+    "httpUrl": "http://35.171.24.108:8545"
   },
   "events": {
     "maxAddresses": 10,
