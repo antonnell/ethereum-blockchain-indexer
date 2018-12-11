@@ -57,17 +57,17 @@ function parseBlock (hash) {
   logger.verbose('Parsing block', hash)
   return web3.eth.getBlock(hash, true)
     .then((block) => {
-      return Promise.all(
-        storeBlockData(block),
+      Promise.all(
         block.transactions.map(transaction =>
-        web3.eth.getTransactionReceipt(transaction.hash)
-          .then(receipt => promiseAllProps({
-            eth: parseEthTransaction(transaction),
-            tok: parseTokenTransacion(receipt)
-          }))
-        ))
-      }
-    )
+          web3.eth.getTransactionReceipt(transaction.hash)
+            .then(receipt => promiseAllProps({
+              eth: parseEthTransaction(transaction),
+              tok: parseTokenTransacion(receipt)
+            }))
+        ),
+        storeBlockData(block)
+      )
+    })
 }
 
 module.exports = parseBlock
