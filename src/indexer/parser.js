@@ -15,15 +15,13 @@ const parseEthTransaction = (val) => ({
   txid: val.hash,
   from: val.from,
   to: val.to,
-  status: val.status,
-  transactionHash: val.transactionHash,
-  transactionIndex: val.transactionIndex,
+  hash: val.hash,
   blockHash: val.blockHash,
   blockNumber: val.blockNumber,
-  contractAddress: val.contractAddress,
-  cumulativeGasUsed: val.cumulativeGasUsed,
-  gasUsed: val.gasUsed,
-  logs: val.logs
+  gas: val.gas,
+  gasPrice: val.gasPrice,
+  index: val.transactionIndex,
+  nonce: val.nonce
 })
 
 const tokenEventSignatures = [
@@ -55,7 +53,6 @@ function parseBlock (hash) {
   logger.verbose('Parsing block', hash)
   return web3.eth.getBlock(hash, true)
     .then(({ transactions }) => {
-      console.log(transactions)
       return Promise.all(transactions.map(transaction =>
         web3.eth.getTransactionReceipt(transaction.hash)
           .then(receipt => promiseAllProps({
