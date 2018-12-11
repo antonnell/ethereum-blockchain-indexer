@@ -9,6 +9,10 @@ const web3 = require('./web3')
 
 const DEPLOY_CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000000'
 
+const {
+  storeBlockData
+} = require('./storage')
+
 // parse a single transaction
 const parseEthTransaction = (val) => ({
   addresses: [val.from, val.to || DEPLOY_CONTRACT_ADDRESS].map(toLower),
@@ -52,8 +56,10 @@ function parseTokenTransacion ({ logs, transactionHash }) {
 function parseBlock (hash) {
   logger.verbose('Parsing block', hash)
   return web3.eth.getBlock(hash, true)
-    .then(({ transactions }) => {
-      return Promise.all(transactions.map(transaction =>
+    .then((block) => {
+      return Promise.all(
+        storeBlockData(block),
+        block.transactions.map(transaction =>
         web3.eth.getTransactionReceipt(transaction.hash)
           .then(receipt => promiseAllProps({
             eth: parseEthTransaction(transaction),

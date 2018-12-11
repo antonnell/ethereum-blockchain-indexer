@@ -23,6 +23,20 @@ const pub = db.pubsub()
 // closes the pubsub connection
 const closePubsub = () => pub.quit()
 
+const storeBlockData = (data) =>
+  Promise.all([
+    pg_db.none('insert into blocks (difficulty, gas_limit, gas_used, hash, miner, mix_hash, nonce, number, parent_hash, receipts_root, sha3_uncles, size, state_root, timestamp, total_difficulty, transaction_count, transactions_root) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) ON CONFLICT (hash) DO NOTHING;',
+      [data.difficulty, data.gasLimit, data.gasUsed, data.hash, data.miner, data.mixHash, data.nonce, data.number, data.parentHash, data.receiptsRoot, data.sha3Uncles, data.size, data.stateRoot, data.timestamp, data.totalDifficulty, data.transactions.length, data.transactionsRoot])
+      .then(function () {
+        logger.verbose('Storing block message in DB', data.hash)
+        return {}
+      })
+      .catch(function(err) {
+        logger.error(err)
+        return err
+      })
+  ])
+
 // store ETH transaction data
 const storeEthTransactions = ({ number, data }) =>
   Promise.all(data.addresses.map(function (addr) {
@@ -156,5 +170,6 @@ module.exports = {
   getBestBlock,
   removeData,
   storeBestBlock,
-  storeData
+  storeData,
+  storeBlockData
 }
