@@ -36,7 +36,7 @@ const storeEthTransactions = ({ number, data }) =>
           return pub.publish(`tx:${addr}`, `eth:${data.txid}:confirmed`)
         }),
       db.sadd(`blk:${number}:eth`, hexToBuffer(addr))
-        .then(() => db.expire(`blk:${number}:eth`, maxReorgWindow))//,
+        .then(() => db.expire(`blk:${number}:eth`, maxReorgWindow)),
       pg_db.none('insert into transactions (from, to, hash, block_hash, block_number, gas, gas_price, index, nonce) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
         [data.from, data.to, data.hash, data.blockHash, data.blockNumber, data.gas, data.gasPrice, data.index, data.nonce])
         .then(function () {
