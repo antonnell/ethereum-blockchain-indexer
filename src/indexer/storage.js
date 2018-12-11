@@ -27,7 +27,6 @@ const closePubsub = () => pub.quit()
 const storeEthTransactions = ({ number, data }) =>
   Promise.all(data.addresses.map(function (addr) {
     logger.verbose('Transaction indexed', addr, number, data.txid)
-    console.log(data)
 
     return Promise.all([
 
@@ -38,9 +37,16 @@ const storeEthTransactions = ({ number, data }) =>
         }),
       db.sadd(`blk:${number}:eth`, hexToBuffer(addr))
         .then(() => db.expire(`blk:${number}:eth`, maxReorgWindow))//,
-      // pg_db.none('insert into transactions (from, to, hash, block_hash, block_number, gas, gas_price, index, nonce) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-      //   [data.from, data.to, data.hash, data.blockHash, data.blockNumber, data.gas, data.gasPrice, data.index, data.nonce])
-      //   .then(() => console.log)
+      pg_db.none('insert into transactions (from, to, hash, block_hash, block_number, gas, gas_price, index, nonce) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+        [data.from, data.to, data.hash, data.blockHash, data.blockNumber, data.gas, data.gasPrice, data.index, data.nonce])
+        .then(function () {
+          logger.verbose('Storing tx message in DB', addr, data.txid)
+          return {}
+        })
+        .catch(function(err) {
+          logger.error(err)
+          return err
+        }),
     ])
   }))
 
