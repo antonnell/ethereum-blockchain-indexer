@@ -26,17 +26,17 @@ const closePubsub = () => pub.quit()
 // store ETH transaction data
 const storeEthTransactions = ({ number, data }) =>
   Promise.all(data.addresses.map(function (addr) {
-    logger.verbose('Transaction indexed', data.addr, number, data.txid)
+    logger.verbose('Transaction indexed', addr, number, data.txid)
     console.log(data)
 
     return Promise.all([
 
-      db.zadd(`eth:${data.addr}`, number, hexToBuffer(data.txid))
+      db.zadd(`eth:${addr}`, number, hexToBuffer(data.txid))
         .then(function () {
-          logger.verbose('Publishing tx message', data.addr, data.txid)
-          return pub.publish(`tx:${data.addr}`, `eth:${data.txid}:confirmed`)
+          logger.verbose('Publishing tx message', addr, data.txid)
+          return pub.publish(`tx:${addr}`, `eth:${data.txid}:confirmed`)
         }),
-      db.sadd(`blk:${number}:eth`, hexToBuffer(data.addr))
+      db.sadd(`blk:${number}:eth`, hexToBuffer(addr))
         .then(() => db.expire(`blk:${number}:eth`, maxReorgWindow)),
         pg_db.none('insert into transactions (from, to, hash, block_hash, block_number, gas, gas_price, index, nonce) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
       [data.from, data.to, data.hash, data.blockHash, data.blockNumber, data.gas, data.gasPrice, data.index, data.nonce])
