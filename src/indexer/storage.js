@@ -26,20 +26,20 @@ const closePubsub = () => pub.quit()
 // store ETH transaction data
 const storeEthTransactions = ({ number, data }) =>
   Promise.all(data.addresses.map(function (addr) {
-    logger.verbose('Transaction indexed', addr, number, txid)
+    logger.verbose('Transaction indexed', data.addr, number, data.txid)
     console.log(data)
 
     return Promise.all([
 
-      db.zadd(`eth:${addr}`, number, hexToBuffer(data.txid))
+      db.zadd(`eth:${data.addr}`, number, hexToBuffer(data.txid))
         .then(function () {
-          logger.verbose('Publishing tx message', addr, data.txid)
-          return pub.publish(`tx:${addr}`, `eth:${data.txid}:confirmed`)
+          logger.verbose('Publishing tx message', data.addr, data.txid)
+          return pub.publish(`tx:${data.addr}`, `eth:${data.txid}:confirmed`)
         }),
-      db.sadd(`blk:${number}:eth`, hexToBuffer(addr))
+      db.sadd(`blk:${number}:eth`, hexToBuffer(data.addr))
         .then(() => db.expire(`blk:${number}:eth`, maxReorgWindow)),
-      pg_db.none('insert into transactions (txid, from, to, status, transaction_hash, transaction_index, block_hash, block_number, contract_address, cumulative_gas_used, gas_used) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
-      [data.txid, data.from, data.to, data.status, data.transactionHash, data.transactionIndex, data.blockHash, data.blockNumber, data.contractAddress, data.cumulativeGasUsed, data.gasUsed])
+        pg_db.none('insert into transactions (from, to, hash, block_hash, block_number, gas, gas_price, index, nonce) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+      [data.from, data.to, data.hash, data.blockHash, data.blockNumber, data.gas, data.gasPrice, data.index, data.nonce])
         .then(() => console.log)
     ])
   }))
